@@ -1,5 +1,5 @@
 const fs = require("fs");
-const sys = require("sys");
+const Client = require("ftp");
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
@@ -19,10 +19,27 @@ express()
     fs.writeFile("public/image.png", buf, error => {
       res.setHeader("Content-Type", "text/plain");
       if (error) {
-        res.write("POST request to save_canvas failed:");
+        res.write("Write to image file failed:");
         res.end(JSON.stringify(error, null, 2));
+        return;
       }
-      res.send("POST request to save_canvas worked.");
+      const c = new Client();
+      c.on("ready", function() {
+        c.put("public/image.png", "images/image.png", function(err) {
+          if (error) {
+            res.write("Upload to filezilla failed:");
+            res.end(JSON.stringify(error, null, 2));
+          } else {
+            res.send("POST request to save_canvas worked.");
+          }
+          c.end();
+        });
+      });
+      c.connect({
+        host: process.env.HOST,
+        user: process.env.USER,
+        password: process.env.PASS
+      });
     });
   })
   .listen(PORT, () => console.log(`Listening on ${PORT}`));

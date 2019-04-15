@@ -110,8 +110,9 @@ $("#save").click(function() {
     data: JSON.stringify({
       image: document.getElementById("imageView").toDataURL()
     }),
-    complete: function() {
+    complete: function(data) {
       console.log("Ajax callback");
+      $("#message").html(data.responseText);
       $("#saved_images").append('<img src="/image.png" />');
     }
   });
