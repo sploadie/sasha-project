@@ -101,13 +101,18 @@ $(function() {
 
 // envoie de l'image Canvas
 $("#save").click(function() {
-  alert("ok");
+  // alert("ok");
   $.ajax({
     type: "POST",
     url: "/save_canvas",
-    dataType: "text",
-    data: {
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    data: JSON.stringify({
       image: document.getElementById("imageView").toDataURL()
+    }),
+    complete: function() {
+      console.log("Ajax callback");
+      $("#saved_images").append('<img src="/image.png" />');
     }
   });
 });
